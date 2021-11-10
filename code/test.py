@@ -16,17 +16,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms  # for image Transformation
-import tqdm
-from PIL import Image
-from sklearn.datasets import load_digits
-from sklearn.metrics import (accuracy_score, confusion_matrix, make_scorer,
-                             mean_absolute_error, mean_squared_error,
-                             precision_recall_fscore_support, recall_score,
-                             roc_auc_score)
-from sklearn.model_selection import (KFold, LeaveOneOut, ShuffleSplit,
-                                     cross_val_score, cross_validate,
-                                     train_test_split)
-from sklearn.neural_network import MLPClassifier, MLPRegressor
+
 from torch import nn
 from torch.autograd import Variable
 from torch.nn.modules.container import Sequential

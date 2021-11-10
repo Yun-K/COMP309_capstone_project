@@ -1,5 +1,3 @@
-[TOC]
-
 # Introduction
 
 For this project, our main objective is to construct a CNN model that can let the computer to identify and classify which fruit class does this image belongs. These 3 fruit classes are tomato, cherry and strawberry. By using the constructed model after training, we expect that this fruit classification task can be used in the real life. For achieving this objective, first the typical baseline Model: multilayer perceptron (MLP) model will be used, and then apply the CNN model and tune the parameter based on the previous discovered result in order for the better performance. This project is all done with the help of PyTorch.
@@ -14,7 +12,7 @@ The dataset come from Flickr. We have only got the subset of the whole dataset i
 <img src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/tomato_0516.jpg" alt="tomato_0516" style="zoom:33%;" />
 <img src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/tomato_1284.jpg" alt="tomato_1284" style="zoom:25%;" />
 <img src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/cherry_0226.jpg" alt="cherry_0226" style="zoom:25%;" />
-<img src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/cherry_0366.jpg" alt="cherry_0366" style="zoom:25%;" />
+<img src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/cherry_0366.jpg" alt="cherry_0366" style="zoom:35%;" />
 <img src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/strawberry_0931.jpg" alt="strawberry_0931" style="zoom:25%;" /><img src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/strawberry_0479.jpg" alt="strawberry_0479" style="zoom:25%;" /><img src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/strawberry_0087.jpg" alt="strawberry_0087" style="zoom:25%;" /><img src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/cherry_1359.jpg" alt="cherry_1359" style="zoom:25%;" />
 <img src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/cherry_1019.jpg" alt="cherry_1019" style="zoom:25%;" />
 <img src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/tomato_0087.jpg" alt="tomato_0087" style="zoom:25%;" />
@@ -31,6 +29,7 @@ The dataset come from Flickr. We have only got the subset of the whole dataset i
 <img src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/image-20211024022706008.png" alt="image-20211024022706008" style="zoom:25%;" />
    <br>noisy images that do not have any visible  fruits on it 
 </center>
+
 
 
 Through the observation on the provided images, I find that although classes are perfectly balanced,  there are some noisy images across 3 classes that are absolutely irrelevant and can not represent these fruits. As we can see from above  screenshots, some of them only got the fruit word like Cherry on the image, since we are classified images, not words, so these are considered as noisy images. For the rest, they are absurd such as there is a dog, no fruit is presented, so even a human can not see and figure the fruit inside the image. Therefore, these noisy data should be deleted since they can only confuse and affect the model.
@@ -133,15 +132,17 @@ As I have mentioned above, the optimisation method is for minimizing and passing
 
 For me, I test to use the SGD and Adam as optimizer. I use momentum: 0.9 for SGD, and 0.0001 learning rate for both SGD and Adam.
 
-As we can see from above images, by comparing these 2 plots, we can clearly see that the Adam perform better then SGD, and the coverage speed is much more faster.  From [12], I obtain that basically SGD only maintains a single [learning rate](https://machinelearningmastery.com/learning-rate-for-deep-learning-neural-networks/) (termed alpha) for all weight updates and the learning rate does not change during training. For Adam, it realize this kind of issue and take the benefits of both AdaGrad and RMSProp, so it is much more effective then others. As we can see that, when  30 epoches end, the accuracy for SGD is only around 0.6 while for Adam, it is much more better in which is about 0.8. Therefore, I choose Adam as my final optimizer.
+As we can see from above images, by comparing these 2 plots, we can clearly see that the Adam perform better then SGD, and the coverage speed is much more faster.  From [12], I obtain that basically SGD only maintains a single [learning rate](https://machinelearningmastery.com/learning-rate-for-deep-learning-neural-networks/) (termed alpha) for all weight updates and the learning rate does not change during training. For Adam, it realize this kind of issue and take the benefits of both AdaGrad and RMSProp, so it is much more effective then others. 
 
-By comparing the two graphics we have that although steepy, the Adam is on the rise overall and the accuracy is pretty high, while the line for SGD floats up and down and the accuracy is always minus 70%. According to the comparison, I adapt Adam as the optimizer.
+By comparing above plots, we can see that, when 30 epoches end, the accuracy for SGD is only around 0.6 while for Adam, it is much more better in which is about 0.8. The converge speed for CNN Adam is much more faster then SGD, so, according to this comparison, Adam is adapt as the final optimizer. 
+
+
 
 #### 4. the regularisation strategy,
 
 By googling[13], I obtain the knowledge that regularization is a general term for methods that introduce additional information into the original loss function in order to avoid over-fitting and improve the generalization performance of the model. Therefore, by applying the regularisation strategy, both the origional data will be kept that avoid the potential data loss and the case that the performance accuracy on the unknown and unseen dataset is extremely lower than the training set can be avoided, which improve the generalization of the model. <img align=left width=44% src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/HY7IwrCPsqqAGi4OmoTpwtrN---80-a3L3AviUb3XnXrMfgEpEFm9flrKrUJgyrpTZG30xHQb_Ood4x-X77UjxAJ3uJmc47juXHBamR0u1BvnZeRFJ2oOHbsn1gh4Ui2WHmojRTb=s1600" alt="img" style="zoom:50%;" />
 
-First, the dropout regularisation strategy is applied by me within my code. As we can see from the left graph[14], the left part is the full connected neural net in which all neuron nodes are used. For the right one, the dropout strategy is applied so only part of neuron nodes are in used. From [14], I obtain that each neuron node carries the data of the image partial feature and pass forwardly to the upcoming nodes, so, if they are fully connected, then the model will be overfit since it depend on partial features. By applying the dropout, some nodes will be dropped and so that the model will not rely too much on certain local features thus improve the generalization of the model. In my code, I set up the 0.25 as the prob for each layer, so that only 3/4 of neuron nodeswill be kept.<img width=60% src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/image-20211023202228228.png" alt="image-20211023202228228" style="zoom:33%;" align=right />
+First, the dropout regularisation strategy is applied by me within my code. As we can see from the left graph[14], the left part is the full connected neural net in which all neuron nodes are used. For the right one, the dropout strategy is applied so only part of neuron nodes are in used. From [14], I obtain that each neuron node carries the data of the image partial feature and pass forwardly to the upcoming nodes, so, if they are fully connected, then the model will be overfit since it depend on partial features. By applying the dropout, some nodes will be dropped and so that the model will not rely too much on certain local features thus improve the generalization of the model. In my code, I set up the 0.25 as the prob for each layer, so that only 3/4 of neuron nodes will be kept.<img width=60% src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/image-20211023202228228.png" alt="image-20211023202228228" style="zoom:33%;" align=right />
 Beside this, as we can see from the right screenshot, I have also add the code snippet to avoid the overfit. We can see that I add an if else to check whether the loss on the validation set for this epoch is the minimum or not. If yes, then the model.state_dict() will be saved to the variable, since it is the best. If it is not, and has already occur previously more than 15 epoch of times, then it will early stop the  training process since it has already overfit. I think my code snippet is helpful since the best generalization mode is guaranteed saved. 
 
 #### 5. the activation function (aka. AF)
@@ -195,14 +196,14 @@ As [17] suggest, I try to set up a pretty high learning rate 0.001 as the initia
 #### Number of hidden layers and units on CNN 
 
 ```python
-nn.Conv2d(in_channels=32, out_channels= 64, kernel_size=3, stride=1, padding=1),
+		nn.Conv2d(in_channels=32, out_channels= 64, kernel_size=3, stride=1, padding=1),
           nn.BatchNorm2d(64),
           nn.ReLU(inplace = True), # activitation function 
           nn.MaxPool2d(2, 2), # output: 64 x 75 x 75
           # use dropout to avoid over-fit 
           nn.Dropout(0.25), 
 ```
-<img align=right width=40% src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/16715697-3d69c563031e9ec4.png" alt="img" style="zoom: 33%;" />From [19], I obtain that until test errors are no longer improves, it is usually good to add more layers since small amount of units may cause the under-fit problem. On my code implementation, there are 6 layers in total. For each layer, nn.Conv2d, nn.BatchNorm2d and maxPool2D are used, which we can  observe from the above snippet. Within use them, more important information features will be separated and discovered by the convolution_2D, and then the performance will guaranteed to be stable by the BatchNorm2D. And then, from right screenshot, we can see that the important data(highest value) will be extracted by MaxPool2d and unimportant noisy information will be removed so that the calculation cost is decreased. Finally, Dropout can make sure that our model will not depend on local features which improve the regularization.
+<img align=right width=40% src="https://cdn.jsdelivr.net/gh/Yun-K/pic-bed@latest/images/16715697-3d69c563031e9ec4.png" alt="img" style="zoom: 33%;" />From [19], I obtain that until test errors are no longer improves, it is usually good to add more layers since small amount of units may cause the under-fit problem. On my code implementation, there are 6 layers in total. For each layer, nn.Conv2d, nn.BatchNorm2d and maxPool2D are used, which we can  observe from the above snippet. Within use them, more important information features will be separated and discovered by the convolution_2D, and then the performance will guaranteed to be stable by the BatchNorm2D. And then, from right screenshot, we can see that the important data(highest value) will be extracted by MaxPool2d and unimportant noisy information will be removed so that the calculation cost is decreased. Finally, Dropout can make sure that our model will not depend on local features which improve the regularization. 
 
 By repeating these operations once and once across 6 layers, more important features are extracted and kept, which cause the model be well fitted.
 
@@ -284,3 +285,4 @@ Also, since I have not try existing models such as the transfer learning, VGG ne
 18. https://zhuanlan.zhihu.com/p/261134624
 19. https://towardsdatascience.com/a-walkthrough-of-convolutional-neural-network-7f474f91d7bd
 20. https://www.linkedin.com/pulse/mlp-vs-cnn-rnn-deep-learning-machine-model-momen-negm
+
